@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(statusCmd)
+	baseCmd.AddCommand(statusCmd)
 }
 
 var statusCmd = &cobra.Command{

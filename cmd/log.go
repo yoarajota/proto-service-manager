@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(logCmd)
+	baseCmd.AddCommand(logCmd)
 }
 
 var logCmd = &cobra.Command{
@@ -30,7 +30,7 @@ var logCmd = &cobra.Command{
 				fmt.Println("No logs found.")
 				return nil
 			}
-			
+
 			return fmt.Errorf("failed to read log file: %w", err)
 		}
 

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(runCmd)
+	baseCmd.AddCommand(runCmd)
 }
 
 var runCmd = &cobra.Command{
@@ -24,7 +24,12 @@ var runCmd = &cobra.Command{
 		scriptName := args[1]
 		logger.Info("CLI: Starting service", "service", name, "script", scriptName)
 
-		cfg, err := config.Load("services.yaml")
+		configFile, err := config.GetConfigPath()
+		if err != nil {
+			return err
+		}
+
+		cfg, err := config.Load(configFile)
 		if err != nil {
 			logger.Error("Failed to load config", "error", err)
 			return err

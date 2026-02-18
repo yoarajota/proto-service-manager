@@ -53,7 +53,8 @@ The project follows a standard Go CLI layout:
 ```text
 .
 ├── cmd/                # CLI command implementations (cobra)
-│   ├── root.go         # Entry point and global flags
+│   ├── base.go         # Entry point and global flags
+│   ├── init.go         # `yj init` implementation
 │   ├── list.go         # `yj list` implementation
 │   ├── run.go          # `yj run` implementation
 │   └── ...
@@ -76,7 +77,9 @@ The project follows a standard Go CLI layout:
 
 ### 5.2. Configuration (`services.yaml`)
 
-The source of truth for services.
+The source of truth for services. Resolved via `YJ_CONFIG`, local `./services.yaml`, or `~/.config/yj/services.yaml`.
+
+Create the global config with `yj init`.
 
 ```yaml
 services:
@@ -90,9 +93,10 @@ services:
 
 ### 5.3. Data Flow
 
-1. **Load**: `config.Load("services.yaml")` reads the file.
-2. **Merge**: It iterates through services, checks for `package.json` in `path`, and injects discovered scripts into the in-memory config.
-3. **Execute**: Commands like `run` use the resolved config to spawn processes.
+1. **Resolve**: `config.GetConfigPath()` determines the file location (Env > Local > Global).
+2. **Load**: `config.Load(path)` reads the file.
+3. **Merge**: It iterates through services, checks for `package.json` in `path`, and injects discovered scripts into the in-memory config.
+4. **Execute**: Commands like `run` use the resolved config to spawn processes.
 
 ## 6. Development Patterns
 
@@ -101,7 +105,7 @@ services:
 1. Create a new file in `cmd/` (e.g., `cmd/restart.go`).
 2. Define a `cobra.Command` variable.
 3. Implement `RunE` logic.
-4. Register it in `init()`: `rootCmd.AddCommand(restartCmd)`.
+4. Register it in `init()`: `baseCmd.AddCommand(restartCmd)`.
 
 ### Modifying Configuration
 

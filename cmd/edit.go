@@ -8,18 +8,24 @@ import (
 	"runtime"
 	"strings"
 
+	"yj/internal/config"
+
 	"github.com/spf13/cobra"
 )
 
 func init() {
-	rootCmd.AddCommand(editCmd)
+	baseCmd.AddCommand(editCmd)
 }
 
 var editCmd = &cobra.Command{
 	Use:   "edit",
 	Short: "Edit services configuration",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		file := "services.yaml"
+		file, err := "services.yaml", error(nil)
+		resolvedPath, err := config.GetConfigPath()
+		if err == nil {
+			file = resolvedPath
+		}
 
 		// 1. Try VS Code first
 		if _, err := exec.LookPath("code"); err == nil {
@@ -64,7 +70,7 @@ var editCmd = &cobra.Command{
 		c := exec.Command(command, commandArgs...)
 		// Set Dir to /mnt/c for WSL to avoid UNC warnings safely, though less critical for direct executable execution
 		if isWSL() {
-			c.Dir = "/mnt/c" 
+			c.Dir = "/mnt/c"
 		}
 		c.Stdin = os.Stdin
 		c.Stdout = os.Stdout
@@ -75,7 +81,7 @@ var editCmd = &cobra.Command{
 
 func isWSL() bool {
 	data, err := os.ReadFile("/proc/version")
-	
+
 	if err != nil {
 		return false
 	}
@@ -91,4 +97,3 @@ func toWindowsPath(linuxPath string) (string, error) {
 	}
 	return strings.TrimSpace(string(output)), nil
 }
-

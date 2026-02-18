@@ -93,13 +93,13 @@ mv yj /usr/local/bin
 
 ## Configuration
 
-By default, `yj` expects its config at:
+`yj` searches for `services.yaml` in the following order:
 
-```text
-~/.yj/services.yaml
-```
+1. **Environment Variable**: `YJ_CONFIG`
+2. **Local Directory**: `./services.yaml`
+3. **Global Config**: `~/.config/yj/services.yaml`
 
-Example:
+Example `services.yaml`:
 
 ```yaml
 services:
@@ -109,7 +109,13 @@ services:
       script-name: command
 ```
 
-If the file does not exist, you can create it manually or via the UI.
+If no configuration is found, `yj` can create one in the global location.
+
+Create the global config:
+
+```bash
+yj init
+```
 
 ---
 
@@ -152,7 +158,7 @@ which yj
 This deletes **all yj data**:
 
 ```bash
-rm -rf ~/.yj
+rm -rf ~/.config/yj
 ```
 
 ---

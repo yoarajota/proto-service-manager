@@ -19,6 +19,40 @@ type ServiceConfig struct {
 	Scripts map[string]string `yaml:"scripts"`
 }
 
+
+func GetConfigPath() (string, error) {
+	// 1. Check environment variable
+	if envPath := os.Getenv("YJ_CONFIG"); envPath != "" {
+		return envPath, nil
+	}
+
+	// 2. Check local directory
+	localPath, err := filepath.Abs("services.yaml")
+	if err != nil {
+		return "", err
+	}
+	if _, err := os.Stat(localPath); err == nil {
+		return localPath, nil
+	}
+
+	// 3. Check global configuration
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	configDir := filepath.Join(homeDir, ".config", "yj")
+	globalPath := filepath.Join(configDir, "services.yaml")
+
+	// Create config directory if it doesn't exist (for future writes)
+	// We don't create the file itself here, just the directory structure
+	if err := os.MkdirAll(configDir, 0755); err != nil {
+		return "", err
+	}
+
+	return globalPath, nil
+}
+
 func Load(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {

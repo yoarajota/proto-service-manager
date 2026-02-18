@@ -9,14 +9,19 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(listCmd)
+	baseCmd.AddCommand(listCmd)
 }
 
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List services",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := config.Load("services.yaml")
+		configFile, err := config.GetConfigPath()
+		if err != nil {
+			return err
+		}
+
+		cfg, err := config.Load(configFile)
 		if err != nil {
 			return err
 		}
@@ -26,7 +31,7 @@ var listCmd = &cobra.Command{
 			for script, cmd := range yj.Scripts {
 				fmt.Printf("  • %s: %s\n", script, cmd)
 			}
-			
+
 			if len(yj.Scripts) == 0 {
 				fmt.Println("  (no scripts)")
 			}
