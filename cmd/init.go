@@ -30,12 +30,12 @@ var initCmd = &cobra.Command{
 			return fmt.Errorf("local services.yaml exists at %s; refusing to create global config without --force", localPath)
 		}
 
-		homeDir, err := os.UserHomeDir()
+		userConfigDir, err := os.UserConfigDir()
 		if err != nil {
 			return err
 		}
 
-		configDir := filepath.Join(homeDir, ".config", "yj")
+		configDir := filepath.Join(userConfigDir, "yj")
 		globalPath := filepath.Join(configDir, "services.yaml")
 		if _, err := os.Stat(globalPath); err == nil && !force {
 			return fmt.Errorf("global config already exists at %s; use --force to overwrite", globalPath)

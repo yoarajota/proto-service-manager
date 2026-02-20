@@ -36,12 +36,12 @@ func GetConfigPath() (string, error) {
 	}
 
 	// 3. Check global configuration
-	homeDir, err := os.UserHomeDir()
+	userConfigDir, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
 
-	configDir := filepath.Join(homeDir, ".config", "yj")
+	configDir := filepath.Join(userConfigDir, "yj")
 	globalPath := filepath.Join(configDir, "services.yaml")
 
 	// Create config directory if it doesn't exist (for future writes)
